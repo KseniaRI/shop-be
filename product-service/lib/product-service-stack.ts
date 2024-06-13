@@ -14,15 +14,26 @@ export class ProductServiceStack extends cdk.Stack {
       handler: 'getProductsList.handler'
     });
 
-    const api = new apigateway.LambdaRestApi(this, 'product-api', {
-      handler: getProductsListFunction,
-      proxy: false
+    const getProductByIdFunction = new lambda.Function(this, 'getProductByIdFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'getProductById.handler'
     });
 
-    const deployment = new apigateway.Deployment(this, 'Deployment', { api });
+    const api = new apigateway.RestApi(this, 'product-api', {
+      restApiName: 'Product Service',
+      cloudWatchRole: true,
+    });
 
     const getProductsListResource = api.root.addResource('products');
-    getProductsListResource.addMethod('GET');
+    const getProductsListLambdaIntegration = new apigateway.LambdaIntegration(getProductsListFunction);
+    getProductsListResource.addMethod('GET', getProductsListLambdaIntegration);
+
+    const getProductByIdLambdaIntegration = new apigateway.LambdaIntegration(getProductByIdFunction);
+    const getProductByIdResource = getProductsListResource.addResource("{id}");
+    getProductByIdResource.addMethod('GET', getProductByIdLambdaIntegration);
+
+    const deployment = new apigateway.Deployment(this, 'Deployment', { api });
 
     const devStage = new apigateway.Stage(this, 'dev-stage', {
       stageName: 'dev',
