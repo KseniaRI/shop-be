@@ -12,16 +12,29 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
     const productId = event.pathParameters?.id;
     const product = productsData.find((product: ProductType) => product.id === productId);
 
-    const response = {
-        statusCode: 200,
-        headers: {
-            "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token', 
-            "Access-Control-Allow-Origin": '*',
-            "Access-Control-Allow-Methods":'*'
-        },
-        body: JSON.stringify({
-            product
-        })
-    };
-    return response;
+    if (product) {
+        const response = {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                "Access-Control-Allow-Origin": '*',
+                "Access-Control-Allow-Methods": '*'
+            },
+            body: JSON.stringify({
+                product
+            })
+        };
+        return response;
+    } else {
+        const response = {
+            statusCode: 404,
+            headers: {
+                "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                "Access-Control-Allow-Origin": '*',
+                "Access-Control-Allow-Methods": '*'
+            },
+            body: JSON.stringify({ message: "Product not found" })
+        }
+        return response;
+    }   
 }

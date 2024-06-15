@@ -10,6 +10,8 @@ servers:
 paths:
   /products/{id}:
     get:
+      tags:
+        - Product
       parameters:
       - name: "id"
         in: "path"
@@ -18,7 +20,7 @@ paths:
           type: "string"
       responses:
         "200":
-          description: "200 response"
+          description: Successful operation
           headers:
             Access-Control-Allow-Origin:
               schema:
@@ -30,6 +32,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+        "404": 
+          description: "User not found"
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: "POST"
@@ -37,6 +41,8 @@ paths:
         passthroughBehavior: "when_no_match"
   /products:
     get:
+      tags:
+        - Product
       responses:
         "200":
           description: "200 response"
