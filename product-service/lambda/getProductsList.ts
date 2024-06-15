@@ -15,9 +15,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
             "Access-Control-Allow-Origin": '*',
             "Access-Control-Allow-Methods": 'GET'
         },
-        body: JSON.stringify({
-            products: productsData
-        })
+        body: JSON.stringify(productsData)
     };
     console.log("response obj", response);
     return response;

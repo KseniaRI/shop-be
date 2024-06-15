@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ProductType } from './productType';
+import { ProductType } from './typeProduct';
 
 const productsFilePath = path.resolve(__dirname, 'products.json');
 const productsData = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
@@ -20,9 +20,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
                 "Access-Control-Allow-Origin": '*',
                 "Access-Control-Allow-Methods": '*'
             },
-            body: JSON.stringify({
-                product
-            })
+            body: JSON.stringify(product)
         };
         return response;
     } else {
