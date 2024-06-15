@@ -19,8 +19,10 @@ Frontend application is integrated with Product Service.
 ### Endpoints: 
 
 ## GET requests:
-- List of products: /products
-- A single product: /products/{id}
+- List of products: 
+### `/products`
+- A single product: 
+### `/products/{id}`
 
 ## To start:
 
@@ -41,5 +43,6 @@ Frontend application is integrated with Product Service.
 - Deploy:
 ### `npm run delploy`
 
-## Swagger documentation: '/product-service/doc/api.yaml'
+## Swagger documentation: 
+`/product-service/doc/api.yaml`
 You can test product-service API with Swagger https://editor.swagger.io/ 
