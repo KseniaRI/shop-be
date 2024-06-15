@@ -1,0 +1,83 @@
+openapi: "3.0.1"
+info:
+  title: "Product Service"
+  version: "2024-06-14T20:12:45Z"
+servers:
+- url: "https://o0u78pqsl4.execute-api.eu-west-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "dev"
+paths:
+  /products/{id}:
+    get:
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Content-Type:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:590183649334:function:ProductServiceStack-getProductByIdFunction4A32F14D-pgunLqU6Iaoc/invocations"
+        passthroughBehavior: "when_no_match"
+  /products:
+    get:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+            Content-Type:
+              schema:
+                type: "string"
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:590183649334:function:ProductServiceStack-getProductsListFunctionF51F21D-TaRj0deQvegZ/invocations"
+        passthroughBehavior: "when_no_match"
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id: 
+          type: string
+        name: 
+          type: string
+        description: 
+          type: string
+        price:
+          type: number
+      required:
+        - id
+        - name
+        - price

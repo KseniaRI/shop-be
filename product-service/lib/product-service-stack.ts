@@ -23,6 +23,11 @@ export class ProductServiceStack extends cdk.Stack {
     const api = new apigateway.RestApi(this, 'product-api', {
       restApiName: 'Product Service',
       cloudWatchRole: true,
+      // defaultCorsPreflightOptions: {
+      //   allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      //   allowMethods: apigateway.Cors.ALL_METHODS, 
+      //   allowHeaders: apigateway.Cors.DEFAULT_HEADERS
+      // }
     });
 
     const getProductsListResource = api.root.addResource('products');

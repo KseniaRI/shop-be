@@ -6,26 +6,22 @@ import { ProductType } from './productType';
 const productsFilePath = path.resolve(__dirname, 'products.json');
 const productsData = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
 
-exports.handler = async function (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     console.log("request:", JSON.stringify(event));
+    
     const productId = event.pathParameters?.id;
-   
     const product = productsData.find((product: ProductType) => product.id === productId);
-    try {
-          const responce = {
-            statusCode: 200,
-            body: JSON.stringify({
-                product
-            })
-        };
-        return responce;
-    } catch (error) {
-        console.log(error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                message: 'some error happened',
-            }),
-        };
-    }
+
+    const response = {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token', 
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods":'*'
+        },
+        body: JSON.stringify({
+            product
+        })
+    };
+    return response;
 }
