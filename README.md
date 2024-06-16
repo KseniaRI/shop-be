@@ -1,6 +1,9 @@
 # MyShop-BE
 
-This is backend service for MyShop aplication (FE is available at repository https://github.com/KseniaRI/nodejs-aws-shop-react). 
+This is backend service for MyShop aplication: 
+### `https://d3r5s5dc64z7tm.cloudfront.net/`
+
+(FE is available at repository https://github.com/KseniaRI/nodejs-aws-shop-react). 
 
 ### It uses the following technologies:
 
@@ -8,6 +11,7 @@ This is backend service for MyShop aplication (FE is available at repository htt
 - [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) creates RESTful API
 - [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) build serverless backend
 - [TypeScript](https://www.typescriptlang.org/) for type checking
+- [Node.js](https://nodejs.org/en) JavaScript runtime environment
 
 # Product service
 
@@ -46,3 +50,6 @@ Frontend application is integrated with Product Service.
 ## Swagger documentation: 
 `/product-service/doc/api.yaml`
 You can test product-service API with Swagger https://editor.swagger.io/ 
+
+## Tests for lambda handlers:
+### `npm run test`
