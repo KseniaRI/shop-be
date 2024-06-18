@@ -9,10 +9,11 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
     const dynamo = DynamoDBDocumentClient.from(client);
 
     const headers = {
-                "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-                "Access-Control-Allow-Origin": '*',
-                "Access-Control-Allow-Methods": 'GET'
-            }
+        "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+        "Access-Control-Allow-Origin": '*',
+        "Access-Control-Allow-Methods": '*'
+    }
+
     try {
         const body = await dynamo.send(
           new ScanCommand({ TableName: 'products' })
@@ -23,7 +24,6 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
             headers,
             body: JSON.stringify(body.Items)
         };
-        console.log("response obj", response);
         return response;
     } catch (error){
         console.error("Error fetching products from DynamoDB", error);
@@ -33,5 +33,4 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
             body: JSON.stringify({ message: "Internal Server Error" })
         };
     }
-    
 };
