@@ -2,23 +2,36 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
-
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 
 export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const table = dynamodb.Table.fromTableArn(
+      this,
+      'ProductsTable',
+      'arn:aws:dynamodb:eu-west-1:590183649334:table/products'
+    );
+
     const getProductsListFunction = new lambda.Function(this, 'getProductsListFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       code: lambda.Code.fromAsset('lambda'),
-      handler: 'getProductsList.handler'
+      handler: 'getProductsList.handler',
+      environment: {
+        PRODUCTS_TABLE_NAME: table.tableName
+      }
     });
 
     const getProductByIdFunction = new lambda.Function(this, 'getProductByIdFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       code: lambda.Code.fromAsset('lambda'),
-      handler: 'getProductById.handler'
+      handler: 'getProductById.handler',
     });
+
+    table.grantReadWriteData(getProductsListFunction);
+    table.grantReadWriteData(getProductByIdFunction);
+    
 
     const api = new apigateway.RestApi(this, 'product-api', {
       restApiName: 'Product Service',
