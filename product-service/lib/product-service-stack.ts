@@ -8,10 +8,16 @@ export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const table = dynamodb.Table.fromTableArn(
+    const productsTable = dynamodb.Table.fromTableArn(
       this,
       'ProductsTable',
       'arn:aws:dynamodb:eu-west-1:590183649334:table/products'
+    );
+
+    const stocksTable = dynamodb.Table.fromTableArn(
+      this,
+      'StocksTable',
+      'arn:aws:dynamodb:eu-west-1:590183649334:table/stocks'
     );
 
     const getProductsListFunction = new lambda.Function(this, 'getProductsListFunction', {
@@ -19,7 +25,8 @@ export class ProductServiceStack extends cdk.Stack {
       code: lambda.Code.fromAsset('lambda'),
       handler: 'getProductsList.handler',
       environment: {
-        PRODUCTS_TABLE_NAME: table.tableName
+        PRODUCTS_TABLE_NAME: productsTable.tableName,
+        STOCKS_TABLE_NAME: stocksTable.tableName,
       }
     });
 
@@ -29,9 +36,10 @@ export class ProductServiceStack extends cdk.Stack {
       handler: 'getProductById.handler',
     });
 
-    table.grantReadWriteData(getProductsListFunction);
-    table.grantReadWriteData(getProductByIdFunction);
-    
+    productsTable.grantReadWriteData(getProductsListFunction);
+    productsTable.grantReadWriteData(getProductByIdFunction);
+    stocksTable.grantReadWriteData(getProductsListFunction);
+  
 
     const api = new apigateway.RestApi(this, 'product-api', {
       restApiName: 'Product Service',
