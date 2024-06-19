@@ -36,19 +36,32 @@ export class ProductServiceStack extends cdk.Stack {
       handler: 'getProductById.handler',
     });
 
+    const createProductFunction = new lambda.Function(this, 'createProductFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'createProduct.handler',
+      environment: {
+        PRODUCTS_TABLE_NAME: productsTable.tableName,
+        STOCKS_TABLE_NAME: stocksTable.tableName,
+      }
+    })
+
     productsTable.grantReadWriteData(getProductsListFunction);
     productsTable.grantReadWriteData(getProductByIdFunction);
+    productsTable.grantReadWriteData(createProductFunction);
+
     stocksTable.grantReadWriteData(getProductsListFunction);
-  
+    stocksTable.grantReadWriteData(createProductFunction);
+    
 
     const api = new apigateway.RestApi(this, 'product-api', {
       restApiName: 'Product Service',
       cloudWatchRole: true,
-      // defaultCorsPreflightOptions: {
-      //   allowOrigins: apigateway.Cors.ALL_ORIGINS,
-      //   allowMethods: apigateway.Cors.ALL_METHODS, 
-      //   allowHeaders: apigateway.Cors.DEFAULT_HEADERS
-      // }
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS, 
+        allowHeaders: apigateway.Cors.DEFAULT_HEADERS
+      }
     });
 
     const getProductsListResource = api.root.addResource('products');
@@ -59,6 +72,9 @@ export class ProductServiceStack extends cdk.Stack {
     const getProductByIdResource = getProductsListResource.addResource("{id}");
     getProductByIdResource.addMethod('GET', getProductByIdLambdaIntegration);
 
+    const createProductLambdaIntegration = new apigateway.LambdaIntegration(createProductFunction);
+    getProductsListResource.addMethod('POST', createProductLambdaIntegration);
+    
     const deployment = new apigateway.Deployment(this, 'Deployment', { api });
 
     const devStage = new apigateway.Stage(this, 'dev-stage', {
