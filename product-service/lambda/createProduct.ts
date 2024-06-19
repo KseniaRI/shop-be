@@ -28,10 +28,13 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
         } else {
             const parsedRequestBody = JSON.parse(requestBody)
             const { title, description, price, count } = parsedRequestBody;
-            const incorrectFieldType = typeof title !== 'string' || typeof description !== 'string' || typeof price !== 'number' || typeof count !== 'number';
-            const undeinedField = !title || !description || price === undefined || count === undefined;
             
-            if (undeinedField || incorrectFieldType) {
+            const incorrectFieldType = typeof title !== 'string' || typeof description !== 'string' || typeof price !== 'number' || typeof count !== 'number';
+            
+            const requiredFields = ['title', 'description', 'price', 'count'];
+            const hasAllRequiredFields = requiredFields.every(field => parsedRequestBody.hasOwnProperty(field));
+            
+            if (!hasAllRequiredFields || incorrectFieldType) {
                 return invalidDataResponse;
             }
 
@@ -59,8 +62,8 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
             );
             return {
                 statusCode: 200,
-                headers, 
-                body: `Created item ${parsedRequestBody.title}`
+                headers,
+                body: JSON.stringify({response:`Created item ${parsedRequestBody.title}`})
             };
         }
     } catch (error) {

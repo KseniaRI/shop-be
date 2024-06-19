@@ -1,9 +1,9 @@
 openapi: "3.0.1"
 info:
   title: "Product Service"
-  version: "2024-06-14T20:12:45Z"
+  version: "2024-06-19T11:11:08Z"
 servers:
-- url: "https://npjkcn07fi.execute-api.eu-west-1.amazonaws.com/{basePath}"
+- url: "https://871xbpugrg.execute-api.eu-west-1.amazonaws.com/{basePath}"
   variables:
     basePath:
       default: "dev"
@@ -35,10 +35,10 @@ paths:
         "404": 
           description: "Product not found"
       x-amazon-apigateway-integration:
-        type: "aws_proxy"
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:590183649334:function:ProductServiceStack-getProductByIdFunction4A32F14D-pgunLqU6Iaoc/invocations"
+        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:590183649334:function:ProductServiceStack-getProductByIdFunction4A32F14D-SboSbTvfRNhq/invocations"
         passthroughBehavior: "when_no_match"
+        type: "aws_proxy"
   /products:
     get:
       tags:
@@ -66,10 +66,58 @@ paths:
                 items:
                   $ref: '#/components/schemas/Product'
       x-amazon-apigateway-integration:
-        type: "aws_proxy"
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:590183649334:function:ProductServiceStack-getProductsListFunctionF51F21D-TaRj0deQvegZ/invocations"
+        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:590183649334:function:ProductServiceStack-getProductsListFunctionF51F21D-6pn6eccquAYo/invocations"
         passthroughBehavior: "when_no_match"
+        type: "aws_proxy"
+    post:
+      tags:
+        - Product
+      requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    price:
+                      type: integer
+                    count:
+                      type: integer
+                  required:
+                    - title
+                    - description
+                    - price
+                    - count
+      responses:
+        "201":
+          description: "New product created"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+            Content-Type:
+              schema:
+                type: "string"
+        "404": 
+          description: "Invalid data"
+        "500": 
+          description: "Internal Server Error"
+      x-amazon-apigateway-integration:
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:590183649334:function:ProductServiceStack-createProductFunctionB839AA42-NoS96V30toGg/invocations"
+        passthroughBehavior: "when_no_match"
+        type: "aws_proxy"
 components:
   schemas:
     Product:
@@ -87,4 +135,6 @@ components:
         - id
         - title
         - price
+        - description
+        - count
 
