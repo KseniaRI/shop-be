@@ -24,7 +24,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
         const stockResult = await dynamo.send(new ScanCommand({ TableName: 'stocks' }))
         const stocks = stockResult.Items as StockType[];
 
-        const joindData = products.map(product => {
+        const joinedData = products.map(product => {
             const productStock = stocks.find(stock => stock.product_id === product.id);
             return {
                 ...product,
@@ -35,7 +35,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
         const response = {
             statusCode: 200,
             headers, 
-            body: JSON.stringify(joindData)
+            body: JSON.stringify(joinedData)
         };
         return response;
     } catch (error){

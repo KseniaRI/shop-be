@@ -51,6 +51,7 @@ export class ProductServiceStack extends cdk.Stack {
     productsTable.grantReadWriteData(createProductFunction);
 
     stocksTable.grantReadWriteData(getProductsListFunction);
+    stocksTable.grantReadWriteData(getProductByIdFunction);
     stocksTable.grantReadWriteData(createProductFunction);
     
 

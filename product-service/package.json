@@ -11,7 +11,7 @@
     "cdk": "cdk",
     "synth": "cdk synth",
     "deploy": "cdk deploy",
-    "fill db": "aws dynamodb put-item --table-name products --item '{\"id\": {\"S\": \"ec3105b8-072f-42a6-ad18-5f0795403a74\"}, \"title\": {\"S\": \"Product 1\"}, \"description\": {\"S\": \"Description for product 1\"}, \"price\": {\"N\": \"10.99\"}}' && aws dynamodb put-item --table-name products --item '{\"id\": {\"S\": \"f874e8e7-5c2b-4ee9-b791-55e58b99c9fc\"}, \"title\": {\"S\": \"Product 2\"}, \"description\": {\"S\": \"Description for product 2\"}, \"price\": {\"N\": \"15.99\"}}' && aws dynamodb put-item --table-name stocks --item '{\"product_id\": {\"S\": \"ec3105b8-072f-42a6-ad18-5f0795403a74\"}, \"count\": {\"N\": \"2\"}}' && aws dynamodb put-item --table-name stocks --item '{\"product_id\": {\"S\": \"f874e8e7-5c2b-4ee9-b791-55e58b99c9fc\"}, \"count\": {\"N\": \"3\"}}'"
+    "fill-db": "aws dynamodb put-item --table-name products --item '{\"id\": {\"S\": \"ec3105b8-072f-42a6-ad18-5f0795403a74\"}, \"title\": {\"S\": \"Product 1\"}, \"description\": {\"S\": \"Description for product 1\"}, \"price\": {\"N\": \"10.99\"}}' && aws dynamodb put-item --table-name products --item '{\"id\": {\"S\": \"f874e8e7-5c2b-4ee9-b791-55e58b99c9fc\"}, \"title\": {\"S\": \"Product 2\"}, \"description\": {\"S\": \"Description for product 2\"}, \"price\": {\"N\": \"15.99\"}}' && aws dynamodb put-item --table-name stocks --item '{\"product_id\": {\"S\": \"ec3105b8-072f-42a6-ad18-5f0795403a74\"}, \"count\": {\"N\": \"2\"}}' && aws dynamodb put-item --table-name stocks --item '{\"product_id\": {\"S\": \"f874e8e7-5c2b-4ee9-b791-55e58b99c9fc\"}, \"count\": {\"N\": \"3\"}}'"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
