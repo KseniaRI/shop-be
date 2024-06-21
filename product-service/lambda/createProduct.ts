@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { randomUUID } from 'crypto';
 
 exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -40,26 +40,33 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
 
             const productId = randomUUID();
 
-            await dynamo.send(
-                new PutCommand({
-                    TableName: 'products',
-                    Item: {
-                        id: productId,
-                        price,
-                        title,
-                        description
+            const transactionCommand = new TransactWriteCommand({
+                TransactItems: [
+                    {
+                        Put: {
+                            TableName: 'products',
+                            Item: {
+                                id: productId,
+                                price,
+                                title,
+                                description
+                            }
+                        }
                     },
-                })
-            );
-            await dynamo.send(
-                new PutCommand({
-                    TableName: 'stocks',
-                    Item: {
-                        product_id: productId,
-                        count
-                    },
-                })
-            );
+                    {
+                        Put: {
+                            TableName: 'stocks',
+                            Item: {
+                                product_id: productId,
+                                count
+                            }
+                        }
+                    }
+                ]
+            });
+
+            await dynamo.send(transactionCommand);
+
             return {
                 statusCode: 200,
                 headers,
