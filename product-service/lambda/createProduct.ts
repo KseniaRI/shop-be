@@ -35,7 +35,9 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
             const requiredFields = ['title', 'description', 'price', 'count'];
             const hasAllRequiredFields = requiredFields.every(field => parsedRequestBody.hasOwnProperty(field));
             
-            if (!hasAllRequiredFields || incorrectFieldType) {
+            const negativeNumbers = price < 0 || count < 0;
+
+            if (!hasAllRequiredFields || incorrectFieldType || negativeNumbers) {
                 return invalidDataResponse;
             }
 

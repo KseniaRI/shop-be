@@ -1,4 +1,4 @@
-# T-Shirt Shop BE
+# Math Squad Shop BE
 
 This is backend service for T-Shirt Shop aplication: 
 ### https://d3r5s5dc64z7tm.cloudfront.net/
