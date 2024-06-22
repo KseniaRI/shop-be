@@ -30,7 +30,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
     try {
         const productResult = await dynamo.send(
             new GetCommand({
-                TableName: 'products',
+                TableName: process.env.PRODUCTS_TABLE_NAME,
                 Key: {
                     id,
                 }
@@ -40,7 +40,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
 
         const stockResult = await dynamo.send(
             new GetCommand({
-                TableName: 'stocks',
+                TableName: process.env.STOCKS_TABLE_NAME,
                 Key: {
                     product_id: id
                 }

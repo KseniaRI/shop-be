@@ -18,10 +18,10 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
     }
 
     try {
-        const productsResult = await dynamo.send(new ScanCommand({ TableName: 'products' }));
+        const productsResult = await dynamo.send(new ScanCommand({ TableName: process.env.PRODUCTS_TABLE_NAME }));
         const products = productsResult.Items as ProductType[];
     
-        const stockResult = await dynamo.send(new ScanCommand({ TableName: 'stocks' }))
+        const stockResult = await dynamo.send(new ScanCommand({ TableName: process.env.STOCKS_TABLE_NAME }))
         const stocks = stockResult.Items as StockType[];
 
         const joinedData = products.map(product => {

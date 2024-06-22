@@ -44,7 +44,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
                 TransactItems: [
                     {
                         Put: {
-                            TableName: 'products',
+                            TableName: process.env.PRODUCTS_TABLE_NAME,
                             Item: {
                                 id: productId,
                                 price,
@@ -55,7 +55,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
                     },
                     {
                         Put: {
-                            TableName: 'stocks',
+                            TableName: process.env.STOCKS_TABLE_NAME,
                             Item: {
                                 product_id: productId,
                                 count
