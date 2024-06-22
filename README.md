@@ -1,6 +1,6 @@
-# MyShop-BE
+# T-Shirt Shop BE
 
-This is backend service for MyShop aplication: 
+This is backend service for T-Shirt Shop aplication: 
 ### https://d3r5s5dc64z7tm.cloudfront.net/
 
 (FE is available at repository https://github.com/KseniaRI/nodejs-aws-shop-react). 
@@ -37,12 +37,12 @@ Frontend application is integrated with Product Service.
 ### `cd ./product-service`
 
 - Install dependencies:
-## `npm i`
+### `npm i`
 
 ## Available Scripts
 
 - Fill db tables with test data:
-## `npm run fill-db`
+### `npm run fill-db`
 
 - Build the project:
 ### `npm run build`
