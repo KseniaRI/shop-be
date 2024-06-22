@@ -14,7 +14,8 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
     
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const id = event.pathParameters?.id;
-
+    console.log("productID:", id);
+    
     if (!id || !uuidRegex.test(id)) {
         return {
             statusCode: 400,

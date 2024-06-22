@@ -26,7 +26,8 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
         if (!requestBody) {
             return invalidDataResponse;
         } else {
-            const parsedRequestBody = JSON.parse(requestBody)
+            const parsedRequestBody = JSON.parse(requestBody);
+            console.log("requestBody:", parsedRequestBody);
             const { title, description, price, count } = parsedRequestBody;
             
             const incorrectFieldType = typeof title !== 'string' || typeof description !== 'string' || typeof price !== 'number' || typeof count !== 'number';
