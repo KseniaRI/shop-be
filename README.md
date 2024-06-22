@@ -1,7 +1,7 @@
 # MyShop-BE
 
 This is backend service for MyShop aplication: 
-### `https://d3r5s5dc64z7tm.cloudfront.net/`
+### https://d3r5s5dc64z7tm.cloudfront.net/
 
 (FE is available at repository https://github.com/KseniaRI/nodejs-aws-shop-react). 
 
@@ -18,7 +18,7 @@ This is backend service for MyShop aplication:
 Frontend application is integrated with Product Service.
 
 ## Base URL for requests: 
-- https://npjkcn07fi.execute-api.eu-west-1.amazonaws.com/dev
+- https://871xbpugrg.execute-api.eu-west-1.amazonaws.com/dev/products
 
 ### Endpoints: 
 
@@ -27,6 +27,9 @@ Frontend application is integrated with Product Service.
 ### `/products`
 - A single product: 
 ### `/products/{id}`
+
+## POST request:
+### `/products`
 
 ## To start:
 
@@ -38,8 +41,11 @@ Frontend application is integrated with Product Service.
 
 ## Available Scripts
 
+- Fill db tables with test data:
+## `npm run fill-db`
+
 - Build the project:
-## `npm run build`
+### `npm run build`
 
 - Synthesize CloudFormation template: 
 ### `npm run synth`
@@ -50,6 +56,3 @@ Frontend application is integrated with Product Service.
 ## Swagger documentation: 
 `/product-service/doc/api.yaml`
 You can test product-service API with Swagger https://editor.swagger.io/ 
-
-## Tests for lambda handlers:
-### `npm run test`
