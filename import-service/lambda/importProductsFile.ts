@@ -1,4 +1,4 @@
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {  PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
@@ -21,12 +21,11 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
     }
 
     const client = new S3Client({});
-    const command = new GetObjectCommand({
+    const command = new PutObjectCommand({
         Bucket: process.env.BUCKET_NAME,
         Key: `uploaded/${fileName}`,
     });
 
-    
    
     try {
         const signedUrl = await getSignedUrl(client, command, { expiresIn: 3600 });
