@@ -4,11 +4,13 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     console.log("request", JSON.stringify(event));
+    
     const headers = {
         "Access-Control-Allow-Headers": 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
         "Access-Control-Allow-Origin": '*',
         "Access-Control-Allow-Methods": '*'
     }
+    
     const fileName = event.queryStringParameters?.name;
     console.log(fileName);
     
