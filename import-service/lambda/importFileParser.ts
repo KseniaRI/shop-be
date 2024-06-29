@@ -4,7 +4,7 @@ import * as csvParser from "csv-parser";
 import { ProductWithStockType } from "../types/typeProductWithStock";
 import { Readable } from "stream";
 
-exports.handler = async (event: S3Event): Promise<void> => {
+exports.handler = async (event: S3Event) => {
     console.log("request", JSON.stringify(event));
     
     for (const record of event.Records) {
@@ -30,13 +30,13 @@ exports.handler = async (event: S3Event): Promise<void> => {
             }
             const readableStream = result.Body as Readable;
             
-            await new Promise<ProductWithStockType[]>((resolve, reject) => {
+            await new Promise<void>((resolve, reject) => {
                 readableStream
                 .pipe(csvParser({ separator: ';' }))
                 .on('data', (data) => productsFromCSV.push(data))
                 .on('end', async () => {
                     console.log(productsFromCSV);
-                    resolve(productsFromCSV);
+                    resolve();
                 })
                 .on('error', (error) => {
                     console.error('Error parsing CSV:', error);
