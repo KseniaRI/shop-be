@@ -3,6 +3,8 @@ import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 
 export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -49,6 +51,24 @@ export class ProductServiceStack extends cdk.Stack {
         STOCKS_TABLE_NAME: stocksTable.tableName,
       }
     })
+
+    const catalogItemsQueue = new sqs.Queue(this, 'catalogItemsQueue'); 
+    
+    const catalogBatchProcessFunction = new lambda.Function(this, 'catalogBatchProcessFunction', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'catalogBatchProcess.handler',
+      environment: {
+        SQS_URL: catalogItemsQueue.queueUrl 
+      }
+    }); 
+    
+    catalogBatchProcessFunction.addEventSource(new SqsEventSource(catalogItemsQueue, {
+      batchSize: 5
+    }))
+
+    // catalogItemsQueue.grantSendMessages(catalogBatchProcessFunction);
+    catalogItemsQueue.grantConsumeMessages(catalogBatchProcessFunction)
 
     productsTable.grantReadWriteData(getProductsListFunction);
     productsTable.grantReadWriteData(getProductByIdFunction);

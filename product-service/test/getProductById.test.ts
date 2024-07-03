@@ -2,7 +2,6 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 
 const { handler } = require('../lambda/getProductById');
 
-
 describe('Get product by id', () => {
     it('should return a 200 status code with CORS headers and a single product', async () => {
         const event: Partial<APIGatewayProxyEvent> = {

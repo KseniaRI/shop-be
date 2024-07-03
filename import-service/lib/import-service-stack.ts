@@ -4,7 +4,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
-import * as path from 'path';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class ImportServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -21,14 +21,20 @@ export class ImportServiceStack extends cdk.Stack {
       },
     })
 
+    const catalogItemsQueueArn = 'arn:aws:sqs:eu-west-1:590183649334:ProductServiceStack-catalogItemsQueue79451959-oswF9djR3NbI';
+    const catalogItemsQueue = sqs.Queue.fromQueueArn(this, 'catalogItemsQueue', catalogItemsQueueArn )
+    
     const importFileParserFunction = new lambda.Function(this, 'importFileParserFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       code: lambda.Code.fromAsset('lambda'),
       handler: 'importFileParser.handler',
       environment: {
         BUCKET_NAME: importBucket.bucketName,
+        SQS_URL: catalogItemsQueue.queueUrl
       },
     })
+
+    catalogItemsQueue.grantSendMessages(importFileParserFunction);
 
     importBucket.grantReadWrite(importProductsFileFunction);
     importBucket.grantReadWrite(importFileParserFunction);
@@ -36,7 +42,7 @@ export class ImportServiceStack extends cdk.Stack {
     importBucket.addEventNotification(s3.EventType.OBJECT_CREATED, new s3n.LambdaDestination(importFileParserFunction), {
       prefix: 'uploaded/'
     });
-    
+
     const api = new apigateway.RestApi(this, 'import-api', {
       restApiName: 'Import Service',
       cloudWatchRole: true,

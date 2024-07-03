@@ -3,6 +3,7 @@ import { S3Event } from 'aws-lambda';
 import * as csvParser from "csv-parser";
 import { ProductWithStockType } from "../types/typeProductWithStock";
 import { Readable } from "stream";
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
 exports.handler = async (event: S3Event) => {
     console.log("request", JSON.stringify(event));
@@ -28,6 +29,7 @@ exports.handler = async (event: S3Event) => {
             if (!result.Body) {
                 throw new Error('Body is undefined');
             }
+
             const readableStream = result.Body as Readable;
             
             await new Promise<void>((resolve, reject) => {
@@ -65,6 +67,14 @@ exports.handler = async (event: S3Event) => {
             console.log('File deleted from uploaded:');
             console.log(`Object ${key} was succesfully moved to parsed folder`);
             
+            const sqsClient = new SQSClient({});
+            const msgCommand = new SendMessageCommand({
+                QueueUrl: process.env.SQS_URL,
+                MessageBody: JSON.stringify(productsFromCSV)
+            });
+            const response = await sqsClient.send(msgCommand);
+            console.log(response)
+
         } catch (error) {
             console.log('Error getting object from S3:', error);    
         }

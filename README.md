@@ -56,3 +56,28 @@ Frontend application is integrated with Product Service.
 ## Swagger documentation: 
 `/product-service/doc/api.yaml`
 You can test product-service API with Swagger https://editor.swagger.io/ 
+
+# Import service
+Frontend application is integrated with Import Service. You can upload csv files from FE.
+### URL for GET method to recieve Signed URL: 
+https://me8mqmcnzf.execute-api.eu-west-1.amazonaws.com/dev/import?name=${fileName}
+
+- First go to import-service folder 
+### `cd ./import-service`
+
+- Install dependencies:
+### `npm i`
+
+## Available Scripts
+
+- Build the project:
+### `npm run build`
+
+- Synthesize CloudFormation template: 
+### `npm run synth`
+
+- Deploy:
+### `npm run delploy`
+
+-Test:
+###  `npm run test`
