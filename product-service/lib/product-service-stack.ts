@@ -59,7 +59,9 @@ export class ProductServiceStack extends cdk.Stack {
       code: lambda.Code.fromAsset('lambda'),
       handler: 'catalogBatchProcess.handler',
       environment: {
-        SQS_URL: catalogItemsQueue.queueUrl 
+        SQS_URL: catalogItemsQueue.queueUrl,
+        PRODUCTS_TABLE_NAME: productsTable.tableName,
+        STOCKS_TABLE_NAME: stocksTable.tableName,
       }
     }); 
     
@@ -67,16 +69,17 @@ export class ProductServiceStack extends cdk.Stack {
       batchSize: 5
     }))
 
-    // catalogItemsQueue.grantSendMessages(catalogBatchProcessFunction);
     catalogItemsQueue.grantConsumeMessages(catalogBatchProcessFunction)
 
     productsTable.grantReadWriteData(getProductsListFunction);
     productsTable.grantReadWriteData(getProductByIdFunction);
     productsTable.grantReadWriteData(createProductFunction);
+    productsTable.grantReadWriteData(catalogBatchProcessFunction);
 
     stocksTable.grantReadWriteData(getProductsListFunction);
     stocksTable.grantReadWriteData(getProductByIdFunction);
     stocksTable.grantReadWriteData(createProductFunction);
+    stocksTable.grantReadWriteData(catalogBatchProcessFunction);
     
 
     const api = new apigateway.RestApi(this, 'product-api', {

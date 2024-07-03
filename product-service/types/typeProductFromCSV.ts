@@ -1,4 +1,4 @@
-export interface ProductWithStockType {
+export interface ProductFromCSV {
     title: string,
     description: string,
     price: number,
