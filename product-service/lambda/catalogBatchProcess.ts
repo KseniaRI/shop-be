@@ -2,6 +2,7 @@ import { SQSEvent } from "aws-lambda";
 import { ProductFromCSV } from "../types/typeProductFromCSV";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { PublishCommand, SNSClient, SubscribeCommand } from "@aws-sdk/client-sns";
 import { randomUUID } from 'crypto';
 
 exports.handler = async (event: SQSEvent) => { 
@@ -11,12 +12,12 @@ exports.handler = async (event: SQSEvent) => {
 
     const client = new DynamoDBClient({});
     const dynamo = DynamoDBDocumentClient.from(client);
+    const snsClient = new SNSClient({});
 
     for (const product of products) {
         const { title, description, price, count } = product;
         try {
             const productId = randomUUID();
-
             const transactionCommand = new TransactWriteCommand({
                 TransactItems: [
                     {
@@ -41,7 +42,16 @@ exports.handler = async (event: SQSEvent) => {
                     }
                 ]
             });
+
             await dynamo.send(transactionCommand);
+
+            const message = `Product created: ${title} (id: ${productId}, price: ${price}, description: ${description}, count: ${count})`;
+            const publishCommand = new PublishCommand({
+                TopicArn: process.env.SNS_ARN,
+                Message: message
+            })
+            await snsClient.send(publishCommand);
+
         } catch (error) {
             console.log('Error of writing parsed csv to db', error);
         }

@@ -42,7 +42,6 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
             }
 
             const productId = randomUUID();
-
             const transactionCommand = new TransactWriteCommand({
                 TransactItems: [
                     {
