@@ -45,7 +45,7 @@ exports.handler = async (event: SQSEvent) => {
 
             await dynamo.send(transactionCommand);
 
-            const message = `Product created: ${title} (id: ${productId}, price: ${price}, description: ${description}, count: ${count})`;
+            const message = `Product created: ${title} (price: ${price}, description: ${description}, count: ${count})`;
             const publishCommand = new PublishCommand({
                 TopicArn: process.env.SNS_ARN,
                 Message: message,
@@ -53,11 +53,11 @@ exports.handler = async (event: SQSEvent) => {
                     price: {
                         DataType: "Number",
                         StringValue: price.toString()
-                    }
+                    }, 
                 }
             })
+            
             await snsClient.send(publishCommand);
-
         } catch (error) {
             console.log('Error of writing parsed csv to db', error);
         }

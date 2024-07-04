@@ -35,7 +35,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
                 Key: {
                     id,
                 }
-            })  
+            })
         )
         const product = productResult.Item as ProductType;
 
@@ -45,7 +45,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
                 Key: {
                     product_id: id
                 }
-            })  
+            })
         )
         const stock = stockResult.Item as StockType;
 
@@ -68,7 +68,7 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
                 body: JSON.stringify({ message: "Product not found" })
             }
             return response;
-        }   
+        }
     } catch (error) {
         console.error("Error fetching products from DynamoDB", error);
          return {
@@ -78,3 +78,4 @@ exports.handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
         };
     }
 }
+
