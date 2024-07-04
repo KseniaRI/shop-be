@@ -57,7 +57,20 @@ export class ProductServiceStack extends cdk.Stack {
     const catalogItemsQueue = new sqs.Queue(this, 'catalogItemsQueue'); 
 
     const createProductTopic = new sns.Topic(this, 'createProductTopic');
-    createProductTopic.addSubscription(new subs.EmailSubscription('ksushapi@gmail.com'));
+    createProductTopic.addSubscription(new subs.EmailSubscription('ksushapi@gmail.com', {
+      filterPolicy: {
+        price: sns.SubscriptionFilter.numericFilter({
+          greaterThan: 10
+        })
+      }
+    }));
+    createProductTopic.addSubscription(new subs.EmailSubscription('pilshchikovaksenia@yandex.ru', {
+      filterPolicy: {
+        price: sns.SubscriptionFilter.numericFilter({
+          lessThanOrEqualTo: 10
+        })
+      }
+    }));
 
     const catalogBatchProcessFunction = new lambda.Function(this, 'catalogBatchProcessFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
