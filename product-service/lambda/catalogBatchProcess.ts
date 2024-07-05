@@ -58,6 +58,7 @@ exports.handler = async (event: SQSEvent) => {
             })
             
             await snsClient.send(publishCommand);
+            console.log(`Product from SQS with ${title} was placed in db tables (price: ${price}, description: ${description}, count: ${count})`)
         } catch (error) {
             console.log('Error of writing parsed csv to db', error);
         }
