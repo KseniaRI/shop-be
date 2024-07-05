@@ -48,14 +48,23 @@ export class ImportServiceStack extends cdk.Stack {
       cloudWatchRole: true,
     })
 
+    const basicAuthorizerFunctionArn = 'arn:aws:lambda:eu-west-1:590183649334:function:AuthorizationServiceStack-basicAuthorizerFunction2-ESF8JSJp4WpM'
+    const basicAuthorizerFunction = lambda.Function.fromFunctionArn(this, 'basicAuthorizerFunction', basicAuthorizerFunctionArn)
+    const authorizer = new apigateway.TokenAuthorizer(this, 'APIGatewayAuthorizer', {
+      handler: basicAuthorizerFunction,
+      identitySource: apigateway.IdentitySource.header('Authorization')
+    });
+
     const importProductsFileResource = api.root.addResource('import');
     const importProductsFileLambdaIntegration = new apigateway.LambdaIntegration(importProductsFileFunction);
     importProductsFileResource.addMethod('GET', importProductsFileLambdaIntegration, {
+      authorizer,
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
       requestParameters: {
         'method.request.querystring.name': true
       }
     });
-  
+
     const deployment = new apigateway.Deployment(this, 'Deployment', { api });
 
     const devStage = new apigateway.Stage(this, 'dev-stage', {

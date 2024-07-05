@@ -1,5 +1,8 @@
 import { Effect } from 'aws-cdk-lib/aws-iam';
 import { APIGatewayAuthorizerResult, APIGatewayTokenAuthorizerEvent} from 'aws-lambda';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 exports.handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<APIGatewayAuthorizerResult> => {
     console.log("request", JSON.stringify(event));

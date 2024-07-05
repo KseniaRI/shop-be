@@ -60,7 +60,7 @@ You can test product-service API with Swagger https://editor.swagger.io/
 # Import service
 Frontend application is integrated with Import Service. You can upload csv files from FE.
 ## NB:
-### Please note that CSV-parser uses the default separator `,`. If your test CSV-file has different separator (`;`, `|`, `\t` etc...) you should change it manually othervise you will face the parse error.
+### Please note that CSV-parser uses the default separator `,`. If your test CSV-file has different separator (`;`, `|`, `\t` etc...) you should change it manually otherwise you will face the parse error.
 
 ### URL for GET method to recieve Signed URL: 
 https://me8mqmcnzf.execute-api.eu-west-1.amazonaws.com/dev/import?name=${fileName}
