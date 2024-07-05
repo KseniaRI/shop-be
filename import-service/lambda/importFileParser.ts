@@ -31,10 +31,12 @@ exports.handler = async (event: S3Event) => {
             }
 
             const readableStream = result.Body as Readable;
-            
+           
+
             await new Promise<void>((resolve, reject) => {
                 readableStream
-                .pipe(csvParser({ separator: ';' }))
+                // .pipe(csvParser({ separator: ';' })) //depends on regional default separator
+                .pipe(csvParser())
                 .on('data', (data) => productsFromCSV.push(data))
                 .on('end', async () => {
                     console.log(productsFromCSV);
