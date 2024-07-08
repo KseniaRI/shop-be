@@ -5,6 +5,7 @@ import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 export class ImportServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -48,8 +49,14 @@ export class ImportServiceStack extends cdk.Stack {
       cloudWatchRole: true,
     })
 
-    const basicAuthorizerFunctionArn = 'arn:aws:lambda:eu-west-1:590183649334:function:AuthorizationServiceStack-basicAuthorizerFunction2-ESF8JSJp4WpM'
-    const basicAuthorizerFunction = lambda.Function.fromFunctionArn(this, 'basicAuthorizerFunction', basicAuthorizerFunctionArn)
+    const basicAuthorizerFunctionArn = cdk.Fn.importValue('BasicAuthorizerFunctionArn');
+    const basicAuthorizerFunctionArnRole = cdk.Fn.importValue("BasicAuthorizerFunctionArnRole");
+    const basicAuthorizerFunctionRole = iam.Role.fromRoleArn(this, "BasicAuthorizerFunctionRole", basicAuthorizerFunctionArnRole)
+    const basicAuthorizerFunction = lambda.Function.fromFunctionAttributes(this, 'basicAuthorizerFunction', {
+      functionArn: basicAuthorizerFunctionArn,
+      role: basicAuthorizerFunctionRole
+    })
+    
     const authorizer = new apigateway.TokenAuthorizer(this, 'APIGatewayAuthorizer', {
       handler: basicAuthorizerFunction,
       identitySource: apigateway.IdentitySource.header('Authorization')
@@ -73,5 +80,16 @@ export class ImportServiceStack extends cdk.Stack {
     });
 
     api.deploymentStage = devStage;
+    
+    new cdk.CfnOutput(this, 'ImportFile', {
+      value: importProductsFileFunction.functionArn,
+      exportName: "ImportProductsFileFunctionArn"
+    });
+
+    new cdk.CfnOutput(this, 'ImportFileRole', {
+      value: importProductsFileFunction.role!.roleArn,
+      exportName: "ImportProductsFileFunctionArnRole"
+    })
   }
 }
+   

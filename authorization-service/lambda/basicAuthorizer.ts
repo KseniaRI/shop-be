@@ -14,18 +14,17 @@ exports.handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<APIGate
     try {
         console.log('authorizationToken', event.authorizationToken);
         const encodedCreds = event.authorizationToken.split(' ')[1];
-        console.log('encodedCreds', encodedCreds)
         const buff = Buffer.from(encodedCreds, 'base64');
-        console.log('buff', buff);
         const plainCreds = buff.toString('utf-8').split(':');
         console.log('plainCreds', plainCreds)
         const [userName, password] = plainCreds;
-        console.log('userName', userName);
-        console.log('password', password);
 
         const storedUserPassword = process.env[userName];
+        console.log('storedUserPassword', storedUserPassword)
+
         const effect = !storedUserPassword || storedUserPassword !== password ? Effect.DENY : Effect.ALLOW;
-        
+        console.log('effect', effect);
+        console.log('resorse', event.methodArn )
         policy = generatePolicy(encodedCreds, effect, event.methodArn);
         return policy;
     } catch (error) {
