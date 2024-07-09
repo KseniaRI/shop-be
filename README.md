@@ -13,6 +13,10 @@ This is backend service for T-Shirt Shop aplication:
 - [TypeScript](https://www.typescriptlang.org/) for type checking
 - [Node.js](https://nodejs.org/en) JavaScript runtime environment
 
+# Authorization-service
+
+On FE app add to localStorage 'authorization_token' without word "Basic"
+
 # Product service
 
 Frontend application is integrated with Product Service.
@@ -63,7 +67,7 @@ Frontend application is integrated with Import Service. You can upload csv files
 ### Please note that CSV-parser uses the default separator `,`. If your test CSV-file has different separator (`;`, `|`, `\t` etc...) you should change it manually otherwise you will face the parse error.
 
 ### URL for GET method to recieve Signed URL: 
-https://me8mqmcnzf.execute-api.eu-west-1.amazonaws.com/dev/import?name=${fileName}
+https://pf6r872y4h.execute-api.eu-west-1.amazonaws.com/dev/import?name=${fileName}
 
 - First go to import-service folder 
 ### `cd ./import-service`
