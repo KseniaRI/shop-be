@@ -47,8 +47,14 @@ export class ImportServiceStack extends cdk.Stack {
     const api = new apigateway.RestApi(this, 'import-api', {
       restApiName: 'Import Service',
       cloudWatchRole: true,
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS, 
+        allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      }
     })
-
+    
     const basicAuthorizerFunctionArn = cdk.Fn.importValue('BasicAuthorizerFunctionArn');
     const basicAuthorizerFunctionArnRole = cdk.Fn.importValue("BasicAuthorizerFunctionArnRole");
     const basicAuthorizerFunctionRole = iam.Role.fromRoleArn(this, "BasicAuthorizerFunctionRole", basicAuthorizerFunctionArnRole)
@@ -60,6 +66,7 @@ export class ImportServiceStack extends cdk.Stack {
     const authorizer = new apigateway.TokenAuthorizer(this, 'APIGatewayAuthorizer', {
       handler: basicAuthorizerFunction,
       identitySource: apigateway.IdentitySource.header('Authorization')
+      // resultsCacheTtl: Duration.seconds(0)
     });
 
     const importProductsFileResource = api.root.addResource('import');
@@ -69,7 +76,29 @@ export class ImportServiceStack extends cdk.Stack {
       authorizationType: apigateway.AuthorizationType.CUSTOM,
       requestParameters: {
         'method.request.querystring.name': true
-      }
+      } 
+    });
+    
+    api.addGatewayResponse("GatewayResponseUnauthorized", {
+      type: cdk.aws_apigateway.ResponseType.UNAUTHORIZED,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Headers":
+          "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'"
+      },
+      statusCode:"401"
+    });
+
+    api.addGatewayResponse("GatewayResponseAccessDenied", {
+      type: cdk.aws_apigateway.ResponseType.ACCESS_DENIED,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Headers":
+          "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'"
+      },
+      statusCode:"403"
     });
 
     const deployment = new apigateway.Deployment(this, 'Deployment', { api });
