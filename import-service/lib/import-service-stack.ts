@@ -11,7 +11,16 @@ export class ImportServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const responseHeaders = {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Headers":
+          "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'"
+    }
+    
     const importBucket = s3.Bucket.fromBucketName(this, 'ImportBucket', 'import-service-bkt');
+    const catalogItemsQueueArn = cdk.Fn.importValue('ItemsQueueArn');
+    const catalogItemsQueue = sqs.Queue.fromQueueArn(this, 'catalogItemsQueue', catalogItemsQueueArn);
 
     const importProductsFileFunction = new lambda.Function(this, 'importProductsFileFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -20,10 +29,7 @@ export class ImportServiceStack extends cdk.Stack {
       environment: {
         BUCKET_NAME: importBucket.bucketName,
       },
-    })
-
-    const catalogItemsQueueArn = 'arn:aws:sqs:eu-west-1:590183649334:ProductServiceStack-catalogItemsQueue79451959-oswF9djR3NbI';
-    const catalogItemsQueue = sqs.Queue.fromQueueArn(this, 'catalogItemsQueue', catalogItemsQueueArn )
+    });
     
     const importFileParserFunction = new lambda.Function(this, 'importFileParserFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -35,25 +41,13 @@ export class ImportServiceStack extends cdk.Stack {
       },
     })
 
-    catalogItemsQueue.grantSendMessages(importFileParserFunction);
-
-    importBucket.grantReadWrite(importProductsFileFunction);
-    importBucket.grantReadWrite(importFileParserFunction);
-
     importBucket.addEventNotification(s3.EventType.OBJECT_CREATED, new s3n.LambdaDestination(importFileParserFunction), {
       prefix: 'uploaded/'
     });
 
-    const api = new apigateway.RestApi(this, 'import-api', {
-      restApiName: 'Import Service',
-      cloudWatchRole: true,
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigateway.Cors.ALL_ORIGINS,
-        allowMethods: apigateway.Cors.ALL_METHODS, 
-        allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
-        allowCredentials: true
-      }
-    })
+    catalogItemsQueue.grantSendMessages(importFileParserFunction);
+    importBucket.grantReadWrite(importProductsFileFunction);
+    importBucket.grantReadWrite(importFileParserFunction);
     
     const basicAuthorizerFunctionArn = cdk.Fn.importValue('BasicAuthorizerFunctionArn');
     const basicAuthorizerFunctionArnRole = cdk.Fn.importValue("BasicAuthorizerFunctionArnRole");
@@ -69,6 +63,17 @@ export class ImportServiceStack extends cdk.Stack {
       // resultsCacheTtl: Duration.seconds(0)
     });
 
+    const api = new apigateway.RestApi(this, 'import-api', {
+      restApiName: 'Import Service',
+      cloudWatchRole: true,
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS, 
+        allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+        allowCredentials: true
+      }
+    })
+
     const importProductsFileResource = api.root.addResource('import');
     const importProductsFileLambdaIntegration = new apigateway.LambdaIntegration(importProductsFileFunction);
     importProductsFileResource.addMethod('GET', importProductsFileLambdaIntegration, {
@@ -78,26 +83,16 @@ export class ImportServiceStack extends cdk.Stack {
         'method.request.querystring.name': true
       } 
     });
-    
+
     api.addGatewayResponse("GatewayResponseUnauthorized", {
       type: cdk.aws_apigateway.ResponseType.UNAUTHORIZED,
-      responseHeaders: {
-        "Access-Control-Allow-Origin": "'*'",
-        "Access-Control-Allow-Headers":
-          "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-        "Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'"
-      },
+      responseHeaders,
       statusCode:"401"
     });
 
     api.addGatewayResponse("GatewayResponseAccessDenied", {
       type: cdk.aws_apigateway.ResponseType.ACCESS_DENIED,
-      responseHeaders: {
-        "Access-Control-Allow-Origin": "'*'",
-        "Access-Control-Allow-Headers":
-          "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-        "Access-Control-Allow-Methods": "'OPTIONS,GET,PUT'"
-      },
+      responseHeaders,
       statusCode:"403"
     });
 

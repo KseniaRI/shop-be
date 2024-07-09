@@ -132,5 +132,10 @@ export class ProductServiceStack extends cdk.Stack {
     });
 
     api.deploymentStage = devStage;
+
+    new cdk.CfnOutput(this, 'ItemsQueue', {
+      value: catalogItemsQueue.queueArn,
+      exportName: 'ItemsQueueArn'
+    });
   }
 }
