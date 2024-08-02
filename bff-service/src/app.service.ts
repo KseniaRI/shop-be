@@ -19,6 +19,7 @@ export class AppService {
     console.log('method', method);
     console.log('originalUrl', originalUrl);
     console.log('body', body);
+
     const recipirentUrl = this.getServiceURL(originalUrl);
     const hasBody = Object.keys(req.body || {}).length > 0;
 
