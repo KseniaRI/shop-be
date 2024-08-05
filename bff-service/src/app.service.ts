@@ -10,21 +10,28 @@ export class AppService {
   getServiceURL(originalURL: string): string | undefined {
     const recipient = originalURL.split('/')[1];
     const recipirentUrl = process.env[recipient];
+    if (!recipirentUrl) {
+      throw { status: 502, data: { error: 'Cannot process request' } };
+    }
     console.log('recipirentUrl', recipirentUrl);
     return recipirentUrl;
   }
+
   async forwardRequest(req: Request) {
-    const { method, originalUrl, body } = req;
+    const { method, originalUrl, body, headers } = req;
 
     console.log('method', method);
     console.log('originalUrl', originalUrl);
     console.log('body', body);
-
+    console.log('authorization', headers.authorization);
     const recipirentUrl = this.getServiceURL(originalUrl);
     const hasBody = Object.keys(req.body || {}).length > 0;
 
     if (recipirentUrl) {
       const axiosConfig = {
+        headers: {
+          authorization: headers.authorization,
+        },
         method,
         url: `${recipirentUrl}${originalUrl}`,
         ...(hasBody && { data: body }),
