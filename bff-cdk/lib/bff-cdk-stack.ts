@@ -1,3 +1,5 @@
+//proxy apigateway for bff EB
+
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';

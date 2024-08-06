@@ -11,7 +11,6 @@ export class AppController {
   async handleFERequest(@Req() req: Request, @Res() res: Response) {
     try {
       const data = await this.appService.forwardRequest(req);
-      console.log(data);
       res.json(data);
     } catch (error) {
       if (error.status) {
