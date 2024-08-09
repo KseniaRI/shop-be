@@ -1,4 +1,5 @@
-//proxy apigateway for bff EB
+
+// It is a proxy apigateway for bff EB 'http://ksenia-bff-service-devs.eu-west-1.elasticbeanstalk.com'
 
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
