@@ -2,7 +2,6 @@
 
 This is backend service for T-Shirt Shop aplication: 
 ### https://d3r5s5dc64z7tm.cloudfront.net/
-
 (FE is available at repository https://github.com/KseniaRI/nodejs-aws-shop-react). 
 
 ### It uses the following technologies:
@@ -13,12 +12,22 @@ This is backend service for T-Shirt Shop aplication:
 - [TypeScript](https://www.typescriptlang.org/) for type checking
 - [Node.js](https://nodejs.org/en) JavaScript runtime environment
 
+> It is a microservices-based application that uses the Backend for Frontend (BFF) pattern. It is an online shop with separate backend microservices for products, carts, imports, authorization, and a dedicated  BFF service to route requests from frontend to the appropriate services.
+> -	React was used for the frontend, and Nest.js for some backend services. AWS services were configured using AWS CDK.
+> -	For static content hosting, Iy was used an S3 bucket and CloudFront as a CDN.
+> -	To manage and expose the microservices, It was used API Gateway and Lambda functions triggered by HTTP methods (GET, POST, PUT, DELETE) or by S3 events (e.g. uploading files in S3 bucket) or by SQS events (e.g. > > messages for new records in S3).
+> -	It was used SNS to create topics and email subscriptions (e.g. notifications about new data added to database)
+> -	I gained experience with both DynamoDB (non-relational) and RDS (relational) databases.
+> -	Authorization service was configured with a Lambda authorizer and integrated with the API Gateway for certain microservices, like administrative actions.
+> -	It was also used AWS Elastic Beanstalk to deploy a Nest.js service (wrapped in a Docker container) via Beanstalk CLI.
+> -	AWS CloudWatch logs helped me throughout development for troubleshooting and checking API responses.
+> -	Finally, this setup permits me to integrate the React frontend and the BFF backend layer to ensure communication between frontend and microservices.
+
 # Authorization-service
 
-On FE app add to localStorage 'authorization_token' without word "Basic"
+On FE app add to localStorage Basic 'authorization_token' 
 
 # Product service
-
 Frontend application is integrated with Product Service.
 
 ## Base URL for requests: 
@@ -36,7 +45,6 @@ Frontend application is integrated with Product Service.
 ### `/products`
 
 ## To start:
-
 - First go to product-service folder 
 ### `cd ./product-service`
 
@@ -76,15 +84,14 @@ https://pf6r872y4h.execute-api.eu-west-1.amazonaws.com/dev/import?name=${fileNam
 ### `npm i`
 
 ## Available Scripts
-
 - Build the project:
 ### `npm run build`
-
 - Synthesize CloudFormation template: 
 ### `npm run synth`
-
 - Deploy:
 ### `npm run delploy`
-
 -Test:
 ###  `npm run test`
+
+# Cart-service
+Look it at separate repo:  https://github.com/KseniaRI/nodejs-aws-cart-api/tree/main
